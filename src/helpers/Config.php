@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
+use App\Exception\NotFoundException;
+
 class Config
 {
   public static function get(string $filename, string $key = null): array|string
   {
-    $fileContent = self::getFileContents($filename);
+    $fileContent = self::getFileContent($filename);
     if ($key === null) {
       return $fileContent;
     }
+
     return isset($fileContent[$key]) ? $fileContent[$key] : [];
   }
 
-  public static function getFileContents(string $filename): array
+  public static function getFileContent(string $filename): array
   {
     $fileContent = [];
 
@@ -25,8 +28,9 @@ class Config
         $fileContent = require $path;
       }
     } catch (\Throwable $exception) {
-      throw new \RuntimeException(
-        sprintf('The specified file: %s was not found', $filename)
+      throw new NotFoundException(
+        sprintf('The specified file: %s was not found', $filename),
+        ['not found file', 'data is passed']
       );
     }
 
