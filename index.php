@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/src/exception/exception.php';
 
-set_exception_handler([new App\Exception\ExceptionHandler(), 'handle']);
+
+$db = new mysqli('failure', 'root', '', 'bug');
+exit;
 
 $config = \App\Helpers\Config::get('not3xist');
 var_dump($config);

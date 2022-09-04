@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exception;
 
 use App\Helpers\App;
-use Throwable;
+use Throwable, ErrorException;
 
 class ExceptionHandler extends BaseException
 {
@@ -18,5 +20,10 @@ class ExceptionHandler extends BaseException
     }
 
     exit;
+  }
+
+  public function convertWarningsAndNoticesToException($severity, $message, $file, $line): void
+  {
+    throw new ErrorException($message, $severity, $severity, $file, $line);
   }
 }
