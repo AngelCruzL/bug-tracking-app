@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Exception;
 
 use Exception;
+use Throwable;
 
 abstract class BaseException extends Exception
 {
@@ -14,13 +15,13 @@ abstract class BaseException extends Exception
     string $message = '',
     array $data = [],
     int $code = 0,
-    Exception $previous = null
+    Throwable $previous = null
   ) {
     $this->data = $data;
     parent::__construct($message, $code, $previous);
   }
 
-  public function setData(string $key, $value): void
+  public function setExtraData(string $key, $value): void
   {
     $this->data[$key] = $value;
   }
