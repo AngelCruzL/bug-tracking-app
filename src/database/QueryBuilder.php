@@ -4,10 +4,8 @@ namespace App\Database;
 
 use App\Contracts\DatabaseConnectionInterface;
 use App\Exception\NotFoundException;
-use InvalidArgumentException;
 
-// abstract class QueryBuilder
-class QueryBuilder
+abstract class QueryBuilder
 {
   protected $connection;
   protected $table;
@@ -16,7 +14,6 @@ class QueryBuilder
   protected $placeholders = [];
   protected $bindings = [];
   protected $operation = self::DML_TYPE_SELECT;
-  public $query;
 
   const OPERATORS = ['=', '>=', '>', '<=', '<', '<>'];
   const PLACEHOLDER = '?';
@@ -54,8 +51,8 @@ class QueryBuilder
     }
 
     $this->parseWhere([$column => $value], $operator);
-    // $this->query = $this->prepare($this->getQuery($this->operation));
-    $this->query = $this->getQuery($this->operation);
+    $query = $this->prepare($this->getQuery($this->operation));
+    $this->statement = $this->execute($query);
     return $this;
   }
 
@@ -76,13 +73,10 @@ class QueryBuilder
     return $this;
   }
 
-  public function getPlaceholders()
-  {
-    return $this->placeholders;
-  }
-
-  public function getBindings()
-  {
-    return $this->bindings;
-  }
+  abstract public function get();
+  abstract public function count();
+  abstract public function lastInsertedId();
+  abstract public function prepare($query);
+  abstract public function execute($statement);
+  abstract public function fetchInto($className);
 }
