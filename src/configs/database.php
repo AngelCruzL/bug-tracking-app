@@ -2,18 +2,20 @@
 
 return [
   'pdo' => [
-    'driver' => 'mysql',
-    'host' => 'localhost',
-    'database' => 'bug_app',
-    'username' => 'root',
-    'password' => 'root',
+    'DB_DRIVER' => 'mysql',
+    'DB_HOST' => 'localhost',
+    'DB_PORT' => '3306',
+    'DB_NAME' => 'bug_app',
+    'DB_USER' => 'root',
+    'DB_PASS' => 'root',
     'default_fetch' => PDO::FETCH_OBJ,
   ],
   'mysqli' => [
-    'host' => 'localhost',
-    'database' => 'bug_app',
-    'username' => 'root',
-    'password' => 'root',
+    'DB_HOST' => 'localhost',
+    'DB_PORT' => '3306',
+    'DB_NAME' => 'bug_app',
+    'DB_USER' => 'root',
+    'DB_PASS' => 'root',
     'default_fetch' => MYSQLI_ASSOC,
   ]
 ];

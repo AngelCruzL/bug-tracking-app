@@ -18,7 +18,7 @@ class DatabaseConnectionTest extends TestCase
     $pdoHandler = new PDOConnection($credentials);
   }
 
-  public function testItCanConnectToDatabaseWithPdoApi()
+  public function testItCanConnectToDatabaseWithPdoApi(): PDOConnection
   {
     $credentials = $this->getCredentials('pdo');
     $pdoHandler = (new PDOConnection($credentials))->connect();
@@ -46,7 +46,7 @@ class DatabaseConnectionTest extends TestCase
     self::assertInstanceOf(\mysqli::class, $handler->getConnection());
   }
 
-  private function getCredentials(string $type)
+  private function getCredentials(string $type): array
   {
     return array_merge(
       Config::get('database', $type),

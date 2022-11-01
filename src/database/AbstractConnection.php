@@ -3,11 +3,13 @@
 namespace App\Database;
 
 use App\Exception\MissingArgumentException;
+use mysqli;
+use PDO;
 
 abstract class AbstractConnection
 {
-  protected $connection;
-  protected $credentials;
+  protected PDO|mysqli $connection;
+  protected array $credentials;
 
   const REQUIRED_CONNECTION_KEYS = [];
 
@@ -24,9 +26,9 @@ abstract class AbstractConnection
     }
   }
 
-  private function credentialsHaveRequiredKeys(array $credentials): bool
+  private function credentialsHaveRequiredKeys(array $providedKeys): bool
   {
-    $matches = array_intersect(static::REQUIRED_CONNECTION_KEYS, array_keys($credentials));
+    $matches = array_intersect(static::REQUIRED_CONNECTION_KEYS, array_keys($providedKeys));
     return count($matches) === count(static::REQUIRED_CONNECTION_KEYS);
   }
 

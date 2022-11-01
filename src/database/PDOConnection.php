@@ -10,11 +10,12 @@ use PDOException;
 class PDOConnection extends AbstractConnection implements DatabaseConnectionInterface
 {
   const REQUIRED_CONNECTION_KEYS = [
-    'driver',
-    'host',
-    'database',
-    'username',
-    'password',
+    'DB_DRIVER',
+    'DB_HOST',
+    'DB_PORT',
+    'DB_NAME',
+    'DB_USER',
+    'DB_PASS',
     'default_fetch',
   ];
 
@@ -35,7 +36,7 @@ class PDOConnection extends AbstractConnection implements DatabaseConnectionInte
     return $this;
   }
 
-  public function getConnection()
+  public function getConnection(): PDO
   {
     return $this->connection;
   }
@@ -43,16 +44,17 @@ class PDOConnection extends AbstractConnection implements DatabaseConnectionInte
   protected function parseCredentials(array $credentials): array
   {
     $dsn = sprintf(
-      '%s:host=%s;dbname=%s',
-      $credentials['driver'],
-      $credentials['host'],
-      $credentials['database']
+      '%s:host=%s;dbname=%s;port=%s',
+      $credentials['DB_DRIVER'],
+      $credentials['DB_HOST'],
+      $credentials['DB_NAME'],
+      $credentials['DB_PORT']
     );
 
     return [
       $dsn,
-      $credentials['username'],
-      $credentials['password'],
+      $credentials['DB_USER'],
+      $credentials['DB_PASS'],
     ];
   }
 }

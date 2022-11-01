@@ -12,10 +12,11 @@ use Throwable;
 class MySQLiConnection extends AbstractConnection implements DatabaseConnectionInterface
 {
   const REQUIRED_CONNECTION_KEYS = [
-    'host',
-    'username',
-    'password',
-    'database'
+    'DB_HOST',
+    'DB_USER',
+    'DB_PASS',
+    'DB_NAME',
+    'DB_PORT'
   ];
 
   public function connect(): MySQLiConnection
@@ -40,10 +41,11 @@ class MySQLiConnection extends AbstractConnection implements DatabaseConnectionI
   protected function parseCredentials(array $credentials): array
   {
     return [
-      $credentials['host'],
-      $credentials['username'],
-      $credentials['password'],
-      $credentials['database'],
+      $credentials['DB_HOST'],
+      $credentials['DB_USER'],
+      $credentials['DB_PASS'],
+      $credentials['DB_NAME'],
+      $credentials['DB_PORT']
     ];
   }
 
