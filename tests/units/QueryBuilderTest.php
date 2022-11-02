@@ -13,8 +13,8 @@ class QueryBuilderTest extends TestCase
 
   public function setUp(): void
   {
-    $this->queryBuilder = DbQueryBuilderFactory::make('database', 'pdo', ['DB_NAME' => 'bug_app_testing']);
-    $this->queryBuilder->getConnection()->beginTransaction();
+    $this->queryBuilder = DbQueryBuilderFactory::make('database', 'mysqli', ['DB_NAME' => 'bug_app_testing']);
+    $this->queryBuilder->beginTransaction();
     parent::setUp();
   }
 
@@ -38,6 +38,7 @@ class QueryBuilderTest extends TestCase
       ->table('reports')
       ->select('*')
       ->where('id', $id)
+      ->runQuery()
       ->first();
 
     self::assertNotNull($result);
@@ -53,6 +54,7 @@ class QueryBuilderTest extends TestCase
       ->select('*')
       ->where('id', $id)
       ->where('report_type', '=', 'Report Type 1')
+      ->runQuery()
       ->first();
 
     self::assertNotNull($result);
@@ -64,17 +66,17 @@ class QueryBuilderTest extends TestCase
   {
     $id = $this->insertIntoTable();
 
-    $result = $this->queryBuilder->select()->find($id);
+    $result = $this->queryBuilder->table('reports')->select()->find($id);
     self::assertNotNull($result);
     self::assertSame($id, $result->id);
     self::assertSame('Report Type 1', $result->report_type);
   }
 
-  public function testTiCanFindOneByGivenValues()
+  public function testItCanFindOneByGivenValues()
   {
     $id = $this->insertIntoTable();
 
-    $result = $this->queryBuilder->select()->findOneBy('report_type', 'Report Type 1');
+    $result = $this->queryBuilder->table('reports')->select()->findOneBy('report_type', 'Report Type 1');
     self::assertNotNull($result);
     self::assertSame($id, $result->id);
     self::assertSame('Report Type 1', $result->report_type);
@@ -86,7 +88,7 @@ class QueryBuilderTest extends TestCase
 
     $count = $this->queryBuilder->table('reports')->update([
       'report_type' => 'Report Type 1 updated'
-    ])->where('id', $id)->count();
+    ])->where('id', $id)->runQuery()->affected();
     self::assertEquals(1, $count);
 
     $result = $this->queryBuilder->select()->find($id);
@@ -99,7 +101,8 @@ class QueryBuilderTest extends TestCase
   {
     $id = $this->insertIntoTable();
 
-    $count = $this->queryBuilder->table('reports')->delete()->where('id', $id)->count();
+    $count = $this->queryBuilder->table('reports')->delete()
+      ->where('id', $id)->runQuery()->affected();
     self::assertEquals(1, $count);
 
     $result = $this->queryBuilder->select()->find($id);
@@ -108,7 +111,7 @@ class QueryBuilderTest extends TestCase
 
   public function tearDown(): void
   {
-    $this->queryBuilder->getConnection()->rollback();
+    $this->queryBuilder->rollback();
     parent::tearDown();
   }
 

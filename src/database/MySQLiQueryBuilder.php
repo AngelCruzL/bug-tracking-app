@@ -14,17 +14,18 @@ class MySQLiQueryBuilder extends QueryBuilder
   const PARAM_TYPE_STRING = 's';
   const PARAM_TYPE_DOUBLE = 'd';
 
-  public function get(): array
+  public function get(): array|null
   {
     $results = [];
     if (!$this->resultSet) {
       $this->resultSet = $this->statement->get_result();
 
-      while ($row = $this->resultSet->fetch_object()) {
-        $results[] = $row;
+      if ($this->resultSet) {
+        while ($row = $this->resultSet->fetch_object()) {
+          $results[] = $row;
+        }
+        $this->results = $results;
       }
-
-      $this->results = $results;
     }
 
     return $this->results;
@@ -111,5 +112,16 @@ class MySQLiQueryBuilder extends QueryBuilder
     }
 
     return $this->results = $results;
+  }
+
+  public function beginTransaction()
+  {
+    $this->connection->begin_transaction();
+  }
+
+  public function affected()
+  {
+    $this->statement->store_result();
+    return $this->statement->affected_rows;
   }
 }
