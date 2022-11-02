@@ -2,8 +2,8 @@
 
 namespace App\Database;
 
-use App\Database\QueryBuilder;
 use InvalidArgumentException;
+use mysqli_stmt;
 
 class MySQLiQueryBuilder extends QueryBuilder
 {
@@ -14,17 +14,23 @@ class MySQLiQueryBuilder extends QueryBuilder
   const PARAM_TYPE_STRING = 's';
   const PARAM_TYPE_DOUBLE = 'd';
 
-  public function get(): QueryBuilder
+  public function get(): array
   {
+    $results = [];
     if (!$this->resultSet) {
       $this->resultSet = $this->statement->get_result();
-      $this->results = $this->resultSet->fetch_all(MYSQLI_ASSOC);
+
+      while ($row = $this->resultSet->fetch_object()) {
+        $results[] = $row;
+      }
+
+      $this->results = $results;
     }
 
     return $this->results;
   }
 
-  public function count(): QueryBuilder
+  public function count(): int
   {
     if (!$this->resultSet) {
       $this->get();
@@ -33,17 +39,17 @@ class MySQLiQueryBuilder extends QueryBuilder
     return $this->resultSet ? $this->resultSet->num_rows : false;
   }
 
-  public function lastInsertedId(): QueryBuilder
+  public function lastInsertedId(): string
   {
     return $this->connection->insert_id;
   }
 
-  public function prepare($query): QueryBuilder
+  public function prepare($query): mysqli_stmt
   {
     return $this->connection->prepare($query);
   }
 
-  public function execute($statement): QueryBuilder
+  public function execute($statement): mysqli_stmt
   {
     if (!$statement) {
       throw new InvalidArgumentException('MySQLi statement is not valid');
@@ -82,7 +88,7 @@ class MySQLiQueryBuilder extends QueryBuilder
     return $bindings;
   }
 
-  public function parseBindingTypes()
+  public function parseBindingTypes(): string
   {
     $bindingTypes = [];
 
