@@ -7,6 +7,7 @@ use App\Database\MySQLiQueryBuilder;
 use App\Database\PDOConnection;
 use App\Database\PDOQueryBuilder;
 use App\Helpers\Config;
+use App\Helpers\DbQueryBuilderFactory;
 use PHPUnit\Framework\TestCase;
 use QueryBuilder;
 
@@ -17,27 +18,14 @@ class QueryBuilderTest extends TestCase
 
   public function setUp(): void
   {
-    $credentials = array_merge(
-      Config::get('database', 'mysqli'),
-      ['DB_NAME' => 'bug_app_testing']
-    );
-
-    $pdo = new MySQLiConnection($credentials);
-
-    $this->queryBuilder = new MySQLiQueryBuilder($pdo->connect());
+    $this->queryBuilder = DbQueryBuilderFactory::make('database', 'pdo', ['DB_NAME' => 'bug_app_testing']);
+    $this->queryBuilder->getConnection()->beginTransaction();
     parent::setUp();
   }
 
   public function testItCanCreateRecords()
   {
-    $data = [
-      'report_type' => 'Report Type 1',
-      'message' => 'This is a test message',
-      'link' => 'https://www.google.com',
-      'email' => 'test@test.com',
-      'created_at' => date('Y-m-d H:i:s'),
-    ];
-    $id = $this->queryBuilder->table('reports')->create($data);
+    $id = $this->insertIntoTable();
     self::assertNotNull($id);
   }
 
@@ -49,26 +37,50 @@ class QueryBuilderTest extends TestCase
 
   public function testItCanPerformSelectQuery()
   {
+    $id = $this->insertIntoTable();
+
     $result = $this->queryBuilder
       ->table('reports')
       ->select('*')
-      ->where('id', 1)
+      ->where('id', $id)
       ->first();
 
     self::assertNotNull($result);
-    self::assertSame(1, (int)$result->id);
+    self::assertSame($id, $result->id);
   }
 
   public function testItCanPerformSelectQueryWithMultipleWhereClause()
   {
+    $id = $this->insertIntoTable();
+
     $result = $this->queryBuilder
       ->table('reports')
       ->select('*')
-      ->where('id', 1)
+      ->where('id', $id)
+      ->where('report_type', '=', 'Report Type 1')
       ->first();
 
     self::assertNotNull($result);
-    self::assertSame(1, (int)$result->id);
+    self::assertSame($id, $result->id);
     self::assertSame('Report Type 1', $result->report_type);
+  }
+
+  public function tearDown(): void
+  {
+    $this->queryBuilder->getConnection()->rollback();
+    parent::tearDown();
+  }
+
+  public function insertIntoTable(): int
+  {
+    $data = [
+      'report_type' => 'Report Type 1',
+      'message' => 'This is a test message',
+      'link' => 'https://www.google.com',
+      'email' => 'test@test.com',
+      'created_at' => date('Y-m-d H:i:s'),
+    ];
+    $id = $this->queryBuilder->table('reports')->create($data);
+    return (int)$id;
   }
 }
