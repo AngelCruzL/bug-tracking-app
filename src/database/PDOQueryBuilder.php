@@ -2,32 +2,32 @@
 
 namespace App\Database;
 
-use App\Database\QueryBuilder;
 use PDO;
+use PDOStatement;
 
 class PDOQueryBuilder extends QueryBuilder
 {
-  public function get(): QueryBuilder
+  public function get(): array
   {
     return $this->statement->fetchAll();
   }
 
-  public function count(): QueryBuilder
+  public function count(): int
   {
     return $this->statement->rowCount();
   }
 
-  public function lastInsertedId(): QueryBuilder
+  public function lastInsertedId(): string
   {
     return $this->connection->lastInsertId();
   }
 
-  public function prepare($query): QueryBuilder
+  public function prepare($query): PDOStatement
   {
     return $this->connection->prepare($query);
   }
 
-  public function execute($statement): QueryBuilder
+  public function execute($statement): PDOStatement
   {
     $statement->execute($this->bindings);
     $this->bindings = [];
