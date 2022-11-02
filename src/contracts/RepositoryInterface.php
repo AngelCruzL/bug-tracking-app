@@ -12,6 +12,6 @@
     public function findAll(int $id): array;
     public function sql(string $query);
     public function create(Entity $entity): object;
-    public function update(Entity $entity, array $condition = []): object;
-    public function delete(Entity $entity, array $condition = []): void;
+    public function update(Entity $entity, array $conditions = []): object;
+    public function delete(Entity $entity, array $conditions = []): void;
   }
