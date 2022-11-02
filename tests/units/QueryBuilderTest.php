@@ -2,11 +2,6 @@
 
 namespace Tests\Units;
 
-use App\Database\MySQLiConnection;
-use App\Database\MySQLiQueryBuilder;
-use App\Database\PDOConnection;
-use App\Database\PDOQueryBuilder;
-use App\Helpers\Config;
 use App\Helpers\DbQueryBuilderFactory;
 use PHPUnit\Framework\TestCase;
 use QueryBuilder;
@@ -63,6 +58,52 @@ class QueryBuilderTest extends TestCase
     self::assertNotNull($result);
     self::assertSame($id, $result->id);
     self::assertSame('Report Type 1', $result->report_type);
+  }
+
+  public function testItCanFindById()
+  {
+    $id = $this->insertIntoTable();
+
+    $result = $this->queryBuilder->select()->find($id);
+    self::assertNotNull($result);
+    self::assertSame($id, $result->id);
+    self::assertSame('Report Type 1', $result->report_type);
+  }
+
+  public function testTiCanFindOneByGivenValues()
+  {
+    $id = $this->insertIntoTable();
+
+    $result = $this->queryBuilder->select()->findOneBy('report_type', 'Report Type 1');
+    self::assertNotNull($result);
+    self::assertSame($id, $result->id);
+    self::assertSame('Report Type 1', $result->report_type);
+  }
+
+  public function testItCanUpdateGivenRecord()
+  {
+    $id = $this->insertIntoTable();
+
+    $count = $this->queryBuilder->table('reports')->update([
+      'report_type' => 'Report Type 1 updated'
+    ])->where('id', $id)->count();
+    self::assertEquals(1, $count);
+
+    $result = $this->queryBuilder->select()->find($id);
+    self::assertNotNull($result);
+    self::assertSame($id, $result->id);
+    self::assertSame('Report Type 1 updated', $result->report_type);
+  }
+
+  public function testItCanDeleteGivenId()
+  {
+    $id = $this->insertIntoTable();
+
+    $count = $this->queryBuilder->table('reports')->delete()->where('id', $id)->count();
+    self::assertEquals(1, $count);
+
+    $result = $this->queryBuilder->select()->find($id);
+    self::assertNull($result);
   }
 
   public function tearDown(): void
