@@ -2,6 +2,8 @@
 
 namespace Tests\Units;
 
+use App\Database\MySQLiConnection;
+use App\Database\MySQLiQueryBuilder;
 use App\Database\PDOConnection;
 use App\Database\PDOQueryBuilder;
 use App\Helpers\Config;
@@ -10,19 +12,19 @@ use QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
-  /** @var QueryBuilder $queryBuilder  */
+  /** @var QueryBuilder $queryBuilder */
   private $queryBuilder;
 
   public function setUp(): void
   {
     $credentials = array_merge(
-      Config::get('database', 'pdo'),
+      Config::get('database', 'mysqli'),
       ['DB_NAME' => 'bug_app_testing']
     );
 
-    $pdo = new PDOConnection($credentials);
+    $pdo = new MySQLiConnection($credentials);
 
-    $this->queryBuilder = new PDOQueryBuilder($pdo->connect());
+    $this->queryBuilder = new MySQLiQueryBuilder($pdo->connect());
     parent::setUp();
   }
 
@@ -54,7 +56,7 @@ class QueryBuilderTest extends TestCase
       ->first();
 
     self::assertNotNull($result);
-    self::assertSame(1, (int) $result->id);
+    self::assertSame(1, (int)$result->id);
   }
 
   public function testItCanPerformSelectQueryWithMultipleWhereClause()
@@ -63,11 +65,10 @@ class QueryBuilderTest extends TestCase
       ->table('reports')
       ->select('*')
       ->where('id', 1)
-      ->where('report_type', '=', 'Report Type 1')
       ->first();
 
     self::assertNotNull($result);
-    self::assertSame(1, (int) $result->id);
+    self::assertSame(1, (int)$result->id);
     self::assertSame('Report Type 1', $result->report_type);
   }
 }
