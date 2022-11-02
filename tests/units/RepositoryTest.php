@@ -3,13 +3,16 @@
   namespace Tests\Units;
 
   use App\Database\QueryBuilder;
+  use App\Entity\BugReport;
   use App\Helpers\DbQueryBuilderFactory;
+  use App\Repository\BugReportRepository;
   use PHPUnit\Framework\TestCase;
 
   class RepositoryTest extends TestCase
   {
     /** @var QueryBuilder $aueryBuilder */
     private $queryBuilder;
+    /** @var BugReportRepository $bugReportRepository */
     private $bugReportRepository;
 
     protected function setUp(): void
@@ -50,9 +53,9 @@
         ->setMessage('This is a message from update method')
         ->setLink('https://github.com/angelcl');
       $updatedReport = $this->bugReportRepository->update($bugReport);
-      self::assertInstanceOf(BugReport::class, $newBugReport);
-      self::assertSame('https://github.com/angelcl', $newBugReport->getLink());
-      self::assertSame('This is a message from update method', $newBugReport->getMessage());
+      self::assertInstanceOf(BugReport::class, $updatedReport);
+      self::assertSame('https://github.com/angelcl', $updatedReport->getLink());
+      self::assertSame('This is a message from update method', $updatedReport->getMessage());
     }
 
     public function testItCanDeleteTheGivenEntity()
@@ -61,6 +64,21 @@
       $this->bugReportRepository->delete($newBugReport);
       $bugReport = $this->bugReportRepository->find($newBugReport->getId());
       self::assertNull($bugReport);
+    }
+
+    public function testItCanFindByCriteria()
+    {
+      $newBugReport = $this->createBugReport();
+      $report = $this->bugReportRepository->findBy([
+        ['report_type', '=', 'Type 2'],
+        ['email', 'test@test.com'],
+      ]);
+      self::assertIsArray($report);
+
+      /** BugReport $bugReport */
+      $newBugReport = $report[0];
+      self::assertSame('Type 2', $newBugReport->getReportType());
+      self::assertSame('https://testing-link.com', $newBugReport->getLink());
     }
 
     public function tearDown(): void

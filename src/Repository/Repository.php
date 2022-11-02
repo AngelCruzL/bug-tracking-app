@@ -38,7 +38,7 @@
 
     public function findBy(array $criteria)
     {
-      $this->queryBuilder->table(static::$className);
+      $this->queryBuilder->table(static::$table);
 
       foreach ($criteria as $criterion) {
         $this->queryBuilder->where(...$criterion);
