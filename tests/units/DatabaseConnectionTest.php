@@ -50,7 +50,7 @@ class DatabaseConnectionTest extends TestCase
   {
     return array_merge(
       Config::get('database', $type),
-      ['database' => 'bug_app_testing'],
+      ['DB_NAME' => 'bug_app_testing'],
     );
   }
 }

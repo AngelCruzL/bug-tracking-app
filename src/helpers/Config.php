@@ -23,7 +23,7 @@ class Config
     $fileContent = [];
 
     try {
-      $path = realpath(sprintf(__DIR__ . '/../configs/%s.php', $filename));
+      $path = realpath(sprintf(__DIR__ . '/../Configs/%s.php', $filename));
       if (file_exists($path)) {
         $fileContent = require $path;
       }
