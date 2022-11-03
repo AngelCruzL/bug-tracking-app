@@ -5,6 +5,7 @@
   use App\Database\QueryBuilder;
   use App\Entity\BugReport;
   use App\Helpers\DbQueryBuilderFactory;
+  use App\Helpers\HttpClient;
   use App\Repository\BugReportRepository;
   use PHPUnit\Framework\TestCase;
 
@@ -14,6 +15,7 @@
     private $queryBuilder;
     /** @var BugReportRepository $repository */
     private $repository;
+    /** @var HttpClient $client */
     private $client;
 
     protected function setUp(): void
@@ -28,7 +30,9 @@
     public function testItCanCreateReportUsingPostRequest(): BugReport
     {
       $postData = $this->getPostData(['add' => true]);
-      $this->client->post('http://localhost:3000/Src/add.php', $postData);
+      $response = $this->client->post('http://localhost:3000/Src/add.php', $postData);
+      $response = json_decode($response, true);
+      self::assertEquals(200, $response['status_code']);
 
       $result = $this->repository->findBy([
         ['report_type', '=', 'Bug'],
@@ -56,7 +60,9 @@
         'link' => 'https://updated.example.com',
         'report_id' => $bugReport->getId()
       ]);
-      $this->client->post('http://localhost:3000/Src/update.php', $postData);
+      $response = $this->client->post('http://localhost:3000/Src/update.php', $postData);
+      $response = json_decode($response, true);
+      self::assertEquals(200, $response['status_code']);
 
       /** @var BugReport $result */
       $result = $this->repository->find($bugReport->getId());
@@ -69,13 +75,15 @@
     }
 
     /** @depends testItCanUpdateReportUsingPostRequest */
-    public function testItCanDeleteReportUsingPostRequest(BugReport $bugReport): BugReport
+    public function testItCanDeleteReportUsingPostRequest(BugReport $bugReport)
     {
       $postData = [
         'delete' => true,
         'report_id' => $bugReport->getId()
       ];
-      $this->client->post('http://localhost:3000/Src/delete.php', $postData);
+      $response = $this->client->post('http://localhost:3000/Src/delete.php', $postData);
+      $response = json_decode($response, true);
+      self::assertEquals(200, $response['status_code']);
 
       /** @var BugReport $result */
       $result = $this->repository->find($bugReport->getId());
