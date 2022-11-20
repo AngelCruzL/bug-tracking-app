@@ -9,7 +9,7 @@
     public function find(int $id): ?object;
     public function findOneBy(string $field, string $value): ?object;
     public function findBy(array $criteria);
-    public function findAll(int $id): array;
+    public function findAll(): array;
     public function sql(string $query);
     public function create(Entity $entity): object;
     public function update(Entity $entity, array $conditions = []): object;

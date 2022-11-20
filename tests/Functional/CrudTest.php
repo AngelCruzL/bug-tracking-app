@@ -20,8 +20,7 @@
 
     protected function setUp(): void
     {
-      $this->queryBuilder = DbQueryBuilderFactory::make('database', 'pdo', ['DB_NAME' => 'bug_app_testing']);
-      $this->queryBuilder->beginTransaction();
+      $this->queryBuilder = DbQueryBuilderFactory::make();
       $this->repository = new BugReportRepository($this->queryBuilder);
       $this->client = new HttpClient();
       parent::setUp();
@@ -94,7 +93,7 @@
     private function getPostData(array $options): array
     {
       return array_merge([
-        'report_type' => 'Bug',
+        'reportType' => 'Bug',
         'message' => 'This is a test message',
         'email' => 'test@test.com',
         'link' => 'https://example.com',
