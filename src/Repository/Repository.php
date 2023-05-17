@@ -50,9 +50,7 @@
     public function findAll(): array
     {
       return $this->queryBuilder
-        ->table(static::$table)
-        ->select()
-        ->runQuery()
+        ->raw("SELECT * FROM " . static::$table)
         ->fetchInto(static::$className);
     }
 
