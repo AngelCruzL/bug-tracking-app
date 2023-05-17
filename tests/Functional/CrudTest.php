@@ -20,7 +20,11 @@
 
     protected function setUp(): void
     {
-      $this->queryBuilder = DbQueryBuilderFactory::make();
+      $this->queryBuilder = DbQueryBuilderFactory::make(
+        'database',
+        'pdo',
+        ['DB_NAME' => 'bug_app_testing']
+      );
       $this->repository = new BugReportRepository($this->queryBuilder);
       $this->client = new HttpClient();
       parent::setUp();
@@ -28,7 +32,7 @@
 
     public function testItCanCreateReportUsingPostRequest(): BugReport
     {
-      $postData = $this->getPostData(['add' => true]);
+      $postData = $this->getPostData(['add' => true, 'is_test' => true]);
       $response = $this->client->post('http://localhost:3000/Src/add.php', $postData);
       $response = json_decode($response, true);
       self::assertEquals(200, $response['status_code']);

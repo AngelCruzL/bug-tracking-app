@@ -22,7 +22,16 @@
 
     try {
       $application = new App;
-      $queryBuilder = DbQueryBuilderFactory::make();
+      if ($_POST['is_test']) {
+        $queryBuilder = DbQueryBuilderFactory::make(
+          'database',
+          'pdo',
+          ['DB_NAME' => 'bug_app_testing']
+        );
+      } else {
+        $queryBuilder = DbQueryBuilderFactory::make();
+      }
+
       $repository = new BugReportRepository($queryBuilder);
       $newReport = $repository->create($bugReport);
     } catch (Throwable $e) {
@@ -37,6 +46,4 @@
       'email' => $newReport->getEmail(),
       'link' => $newReport->getLink()
     ]);
-
-    $bugReports = $repository->findAll();
   }
