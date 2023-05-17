@@ -83,6 +83,7 @@
     {
       $postData = [
         'delete' => true,
+        'is_test' => true,
         'report_id' => $bugReport->getId()
       ];
       $response = $this->client->post('http://localhost:3000/Src/delete.php', $postData);
