@@ -25,7 +25,7 @@
     {
       $handler = curl_init();
       curl_setopt($handler, CURLOPT_URL, $url);
-      curl_setopt($handler, CURLOPT_RETURNTRANSFER, false);
+      curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
 
       $response = curl_exec($handler);
       $statusCode = curl_getinfo($handler, CURLINFO_HTTP_CODE);
