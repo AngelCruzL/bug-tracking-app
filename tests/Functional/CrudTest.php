@@ -59,6 +59,7 @@
     {
       $postData = $this->getPostData([
         'update' => true,
+        'is_test' => true,
         'message' => 'This is an updated test message',
         'link' => 'https://updated.example.com',
         'report_id' => $bugReport->getId()
