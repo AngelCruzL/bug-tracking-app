@@ -1,23 +1,24 @@
 <?php require_once __DIR__ . '/../vendor/autoload.php';
 
-  use App\Entity\BugReport;
   use App\Exception\BadRequestException;
+  use App\Helpers\App;
   use App\Helpers\DbQueryBuilderFactory;
   use App\Logger\Logger;
   use App\Repository\BugReportRepository;
-  use App\Helpers\App;
 
   if (isset($_POST['update'])) {
     $reportType = $_POST['reportType'];
     $message = $_POST['message'];
     $email = $_POST['email'];
     $link = $_POST['link'];
+    $report_id = $_POST['report_id'];
+    $is_test = $_POST['is_test'] ?? false;
     $logger = new Logger;
 
     try {
       $application = new App;
 
-      if ($_POST['is_test']) {
+      if ($is_test) {
         $queryBuilder = DbQueryBuilderFactory::make(
           'database',
           'pdo',
@@ -29,7 +30,7 @@
 
       $repository = new BugReportRepository($queryBuilder);
 
-      $bugReport = $repository->find((int) $_POST['report_id']);
+      $bugReport = $repository->find((int)$report_id);
       $bugReport->setReportType($reportType);
       $bugReport->setMessage($message);
       $bugReport->setEmail($email);

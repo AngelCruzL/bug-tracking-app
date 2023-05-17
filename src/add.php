@@ -2,16 +2,17 @@
 
   use App\Entity\BugReport;
   use App\Exception\BadRequestException;
+  use App\Helpers\App;
   use App\Helpers\DbQueryBuilderFactory;
   use App\Logger\Logger;
   use App\Repository\BugReportRepository;
-  use App\Helpers\App;
 
   if (isset($_POST['add'])) {
     $reportType = $_POST['reportType'];
     $message = $_POST['message'];
     $email = $_POST['email'];
     $link = $_POST['link'];
+    $is_test = $_POST['is_test'] ?? false;
     $logger = new Logger;
 
     $bugReport = new BugReport;
@@ -22,7 +23,7 @@
 
     try {
       $application = new App;
-      if ($_POST['is_test']) {
+      if ($is_test) {
         $queryBuilder = DbQueryBuilderFactory::make(
           'database',
           'pdo',

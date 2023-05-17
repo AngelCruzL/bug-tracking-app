@@ -7,11 +7,12 @@
 
   if (isset($_POST['delete'])) {
     $report_id = $_POST['report_id'];
+    $is_test = $_POST['is_test'] ?? false;
     $logger = new Logger;
 
     try {
 
-      if ($_POST['is_test']) {
+      if ($is_test) {
         $queryBuilder = DbQueryBuilderFactory::make(
           'database',
           'pdo',
